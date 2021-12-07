@@ -43,5 +43,25 @@ public class GlobalRestExceptionHandler {
 		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
 	}
 	
+	@ExceptionHandler
+	public ResponseEntity<ResponseJson> handleException(LikeActionException exc){
+		ResponseJson response = new ResponseJson(
+				HttpStatus.BAD_REQUEST.value(),
+				exc.getMessage(),
+				String.valueOf(sdf.format(System.currentTimeMillis()))
+				);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	@ExceptionHandler
+	public ResponseEntity<ResponseJson> handleException(PostActionException exc){
+		ResponseJson response = new ResponseJson(
+				HttpStatus.BAD_REQUEST.value(),
+				exc.getMessage(),
+				String.valueOf(sdf.format(System.currentTimeMillis()))
+				);
+		return new ResponseEntity<ResponseJson>(response,HttpStatus.NOT_ACCEPTABLE);
+	}
+	
 	
 }

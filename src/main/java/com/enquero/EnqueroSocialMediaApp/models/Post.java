@@ -34,13 +34,17 @@ public class Post {
 	private long likes;
 
 	private long comments;
+	
+	private List<String> hashtags;
 
 	public Post() {
 
 	}
 
-	public Post(String userEmail, String postUsername, String postUserProfilePicUrl, String postType, String postUrl,
-			String postCaption, String postedTime, long likes, long comments) {
+	
+
+	public Post( String userEmail, String postUsername, String postUserProfilePicUrl, String postType,
+			String postUrl, String postCaption, String postedTime, long likes, long comments, List<String> hashtags) {
 		this.userEmail = userEmail;
 		this.postUsername = postUsername;
 		this.postUserProfilePicUrl = postUserProfilePicUrl;
@@ -50,7 +54,10 @@ public class Post {
 		this.postedTime = postedTime;
 		this.likes = likes;
 		this.comments = comments;
+		this.hashtags = hashtags;
 	}
+
+
 
 	public String getPostType() {
 		return postType;
@@ -132,5 +139,28 @@ public class Post {
 		this.comments = comments;
 	}
 
+	
+	
+	public List<String> getHashtags() {
+		return hashtags;
+	}
+
+
+
+	public void setHashtags(List<String> hashtags) {
+		this.hashtags = hashtags;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Post [postId=" + postId + ", userEmail=" + userEmail + ", postUsername=" + postUsername
+				+ ", postUserProfilePicUrl=" + postUserProfilePicUrl + ", postType=" + postType + ", postUrl=" + postUrl
+				+ ", postCaption=" + postCaption + ", postedTime=" + postedTime + ", likes=" + likes + ", comments="
+				+ comments + "]";
+	}
+
+	
 
 }

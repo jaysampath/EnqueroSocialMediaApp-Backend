@@ -10,5 +10,9 @@ public Like addNewLike(Like like);
 	
 public List<Like> getLikesByPost(long postId);
 
-public String deleteLikeByUserPost(long likeId);
+public String deleteLikeByUserPost(String loggedInUserEmail,long postid);
+
+public boolean checkPostLiked(String loggedInuserEmail,long postId);
+
+
 }

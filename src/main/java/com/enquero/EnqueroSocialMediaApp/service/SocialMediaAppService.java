@@ -24,6 +24,12 @@ public interface SocialMediaAppService {
 
 	public Post addNewPost(Post post);
 
+	public List<Post> getPostsByHashtag(String queryString);
+
+	public List<Post> getPostsByUserPosted(String userEmail);
+	
+	public Post updatePost(Post post);
+
 	public Comment addNewComment(Comment newComment);
 
 	public List<Comment> getCommentsByPost(long postId);
@@ -31,9 +37,11 @@ public interface SocialMediaAppService {
 	public String deleteCommentByUserPosted(long commentId);
 
 	public Like addNewLike(Like like);
-	
+
 	public List<Like> getLikesByPost(long postId);
-	
-	public String deleteLikeByUserPost(long likeId);
+
+	public String deleteLikeByUserPost(String userEmail, long postId);
+
+	public boolean checkPostLiked(String loggedInuserEmail, long postId);
 
 }

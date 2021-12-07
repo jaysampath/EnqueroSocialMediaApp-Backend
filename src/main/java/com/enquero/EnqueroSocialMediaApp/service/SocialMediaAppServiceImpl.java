@@ -1,7 +1,10 @@
 package com.enquero.EnqueroSocialMediaApp.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,76 +22,73 @@ import com.enquero.EnqueroSocialMediaApp.models.Like;
 import com.enquero.EnqueroSocialMediaApp.models.Post;
 import com.enquero.EnqueroSocialMediaApp.models.User;
 
-
 @Service
 public class SocialMediaAppServiceImpl implements SocialMediaAppService {
-	
+
 	@Autowired
 	private UsersDao usersDao;
-	
+
 	@Autowired
 	private PostDao postDao;
-	
+
 	@Autowired
 	private CommentDao commentDao;
-	
+
 	@Autowired
 	private LikeDao likeDao;
-	
 
 	SimpleDateFormat sdf = new SimpleDateFormat();
 
 	Logger logger = LoggerFactory.getLogger(SocialMediaAppService.class);
-	
-	
+
 	@Override
 	public User saveNewUser(User user) {
 		// TODO Auto-generated method stub
 		boolean checkIfExisting = usersDao.checkUserExists(user.getEmail());
-		if(checkIfExisting) {
+		if (checkIfExisting) {
 			throw new UserActionException("user already exists");
 		}
 		User newUser = usersDao.newUserRegister(user);
-		
+
 		return newUser;
 	}
-	
+
 	@Override
 	public User getUserByEmail(String userEmail) {
 		// TODO Auto-generated method stub
 		User user = usersDao.getUserByEmail(userEmail);
-		if(user==null) {
+		if (user == null) {
 			throw new UserActionException("user not found");
 		}
 		return user;
 	}
-	
+
 	@Override
 	public String checkUserIsAuth(LoginInput loginInput) {
 		// TODO Auto-generated method stub
 		String response = usersDao.isUserAuthenticated(loginInput);
-		if(response.equals("no")) {
+		if (response.equals("no")) {
 			throw new UserActionException("The email and password combination is incorrect");
-			
+
 		}
 		return "yes";
 	}
-	
+
 	@Override
 	public String checkExistingUser(String email) {
 		// TODO Auto-generated method stub
 		boolean check = usersDao.checkUserExists(email);
-		if(check) {
+		if (check) {
 			throw new UserActionException("user already exists. please login with the same.");
 		}
 		return "no";
 	}
-	
+
 	@Override
 	public User updateUserPassword(String email, String password) {
 		// TODO Auto-generated method stub
 		User user = usersDao.updateUserPassword(email, password);
-		if(user==null) {
+		if (user == null) {
 			throw new UserActionException("invalid user email");
 		}
 		return user;
@@ -106,6 +106,13 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 		// TODO Auto-generated method stub
 		post.setPostId(SequenceGeneratorService.generateSequence(Post.SEQUENCE_NAME));
 		post.setPostedTime(String.valueOf(sdf.format(System.currentTimeMillis())));
+		Pattern MY_PATTERN = Pattern.compile("#(\\S+)");
+		Matcher mat = MY_PATTERN.matcher(post.getPostCaption());
+		List<String> hastags=new ArrayList<String>();
+		while (mat.find()) {
+		  hastags.add(mat.group(1));
+		}
+		post.setHashtags(hastags);
 		Post newPost = postDao.addNewPost(post);
 		return newPost;
 	}
@@ -131,28 +138,64 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 		String response = commentDao.deleteCommentByUserPosted(commentId);
 		return response;
 	}
-	
+
 	@Override
 	public Like addNewLike(Like like) {
-		Like newLike=likeDao.addNewLike(like);
+		getUserByEmail(like.getLikeUserEmail());
+		Like newLike = likeDao.addNewLike(like);
 		return newLike;
 	}
 
 	@Override
 	public List<Like> getLikesByPost(long postId) {
 		// TODO Auto-generated method stub
-		List<Like> likesByPost=likeDao.getLikesByPost(postId);
+		postDao.getPostById(postId);
+		List<Like> likesByPost = likeDao.getLikesByPost(postId);
 		return likesByPost;
 	}
 
 	@Override
-	public String deleteLikeByUserPost(long likeId) {
-		
-		String response=likeDao.deleteLikeByUserPost(likeId);
-		
+	public String deleteLikeByUserPost(String userEmail, long postId) {
+		getUserByEmail(userEmail);
+		String response = likeDao.deleteLikeByUserPost(userEmail, postId);
 		return response;
 	}
 
+	@Override
+	public boolean checkPostLiked(String loggedInuserEmail, long postId) {
+		// TODO Auto-generated method stub
+		postDao.getPostById(postId);
+		getUserByEmail(loggedInuserEmail);
+		boolean response = likeDao.checkPostLiked(loggedInuserEmail, postId);
+		return response;
+	}
 
+	@Override
+	public List<Post> getPostsByHashtag(String queryString) {
+		// TODO Auto-generated method stub
+		List<Post> posts = postDao.getPostsByHashtag(queryString);
+		return posts;
+	}
+
+	@Override
+	public List<Post> getPostsByUserPosted(String userEmail) {
+		// TODO Auto-generated method stub
+		getUserByEmail(userEmail);
+		List<Post> posts = postDao.getPostsByUserPosted(userEmail);
+		return posts;	}
+
+	@Override
+	public Post updatePost(Post post) {
+		// TODO Auto-generated method stub
+		Pattern MY_PATTERN = Pattern.compile("#(\\S+)");
+		Matcher mat = MY_PATTERN.matcher(post.getPostCaption());
+		List<String> hastags=new ArrayList<String>();
+		while (mat.find()) {
+		  hastags.add(mat.group(1));
+		}
+		post.setHashtags(hastags);
+		Post updatedPost = postDao.updatePost(post);
+		return updatedPost;
+	}
 
 }

@@ -9,5 +9,13 @@ public interface PostDao {
 	public List<Post> getPostsForHomePage();
 	
 	public Post addNewPost(Post post);
+	
+	public Post getPostById(long postId);
+	
+	public List<Post> getPostsByHashtag(String queryString);
+	
+	public List<Post> getPostsByUserPosted(String userEmail);
+	
+	public Post updatePost(Post post);
 
 }

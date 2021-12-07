@@ -39,16 +39,32 @@ public class LikeRestController {
 		return likes;
 	}
 	
-	@DeleteMapping("/delete/{likeId}")
-	public ResponseJson deleteLikeByUserPosted(@PathVariable long likeId) {
-		String response = service.deleteLikeByUserPost(likeId);
+	@DeleteMapping("/delete/{userEmail}/{postId}")
+	public ResponseJson deleteLikeByUserPosted(@PathVariable String userEmail, @PathVariable long postId) {
+		String response = service.deleteLikeByUserPost(userEmail,postId);
 		if (response.equals("deleted")) {
 			return new ResponseJson(HttpStatus.ACCEPTED.value(), "Like Deleted Successfully",
 					String.valueOf(sdf.format(System.currentTimeMillis())));
-		} else {
+		} else if(response.equals("not-liked")) {
+			return new ResponseJson(400, "Not liked",
+					String.valueOf(sdf.format(System.currentTimeMillis())));
+		}
+		else {
 			return new ResponseJson(HttpStatus.NOT_ACCEPTABLE.value(), "Error while deleting.",
 					String.valueOf(sdf.format(System.currentTimeMillis())));
 
+		}
+	}
+	
+	@GetMapping("/check/is-liked/{userEmail}/{postId}")
+	public ResponseJson checkPostLiked(@PathVariable String userEmail,@PathVariable long postId) {
+		boolean response = service.checkPostLiked(userEmail, postId);
+		if(response) {
+			return new ResponseJson(200, "1",
+					String.valueOf(sdf.format(System.currentTimeMillis())));
+		}else {
+			return new ResponseJson(400, "0",
+					String.valueOf(sdf.format(System.currentTimeMillis())));
 		}
 	}
 }
