@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.enquero.EnqueroSocialMediaApp.dao.CommentDao;
+import com.enquero.EnqueroSocialMediaApp.dao.LikeDao;
 import com.enquero.EnqueroSocialMediaApp.dao.PostDao;
 import com.enquero.EnqueroSocialMediaApp.dao.UsersDao;
 import com.enquero.EnqueroSocialMediaApp.helpers.LoginInput;
 import com.enquero.EnqueroSocialMediaApp.helpers.UserActionException;
 import com.enquero.EnqueroSocialMediaApp.models.Comment;
+import com.enquero.EnqueroSocialMediaApp.models.Like;
 import com.enquero.EnqueroSocialMediaApp.models.Post;
 import com.enquero.EnqueroSocialMediaApp.models.User;
 
@@ -29,6 +31,9 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 	
 	@Autowired
 	private CommentDao commentDao;
+	
+	@Autowired
+	private LikeDao likeDao;
 	
 
 	SimpleDateFormat sdf = new SimpleDateFormat();
@@ -124,6 +129,27 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 	public String deleteCommentByUserPosted(long commentId) {
 		// TODO Auto-generated method stub
 		String response = commentDao.deleteCommentByUserPosted(commentId);
+		return response;
+	}
+	
+	@Override
+	public Like addNewLike(Like like) {
+		Like newLike=likeDao.addNewLike(like);
+		return newLike;
+	}
+
+	@Override
+	public List<Like> getLikesByPost(long postId) {
+		// TODO Auto-generated method stub
+		List<Like> likesByPost=likeDao.getLikesByPost(postId);
+		return likesByPost;
+	}
+
+	@Override
+	public String deleteLikeByUserPost(long likeId) {
+		
+		String response=likeDao.deleteLikeByUserPost(likeId);
+		
 		return response;
 	}
 
