@@ -2,6 +2,7 @@ package com.enquero.EnqueroSocialMediaApp.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,6 +99,7 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 	public List<Post> getHomePagePosts() {
 		// TODO Auto-generated method stub
 		List<Post> homePagePosts = postDao.getPostsForHomePage();
+		Collections.reverse(homePagePosts);
 		return homePagePosts;
 	}
 
@@ -113,6 +115,15 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 		  hastags.add(mat.group(1));
 		}
 		post.setHashtags(hastags);
+		int index = post.getPostCaption().indexOf("#");
+		if(index!=-1) {
+			String newCaption = post.getPostCaption().substring(0, index); 
+			post.setPostCaption(newCaption);
+		}
+		User user = usersDao.getUserByEmail(post.getUserEmail());
+		if(user!=null) {
+			post.setPostUsername(user.getUsername());
+		}
 		Post newPost = postDao.addNewPost(post);
 		return newPost;
 	}
@@ -194,6 +205,11 @@ public class SocialMediaAppServiceImpl implements SocialMediaAppService {
 		  hastags.add(mat.group(1));
 		}
 		post.setHashtags(hastags);
+		int index = post.getPostCaption().indexOf("#");
+		if(index!=-1) {
+			String newCaption = post.getPostCaption().substring(0, index); 
+			post.setPostCaption(newCaption);
+		}
 		Post updatedPost = postDao.updatePost(post);
 		return updatedPost;
 	}
